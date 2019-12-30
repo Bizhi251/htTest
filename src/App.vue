@@ -1,32 +1,26 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+  <div id='app' class="app">
+<!--    <a-button @click="goTo('/login')">APP</a-button>-->
+    <router-view class="app"/>
+<!--    <FooterGuide v-show="$route.meta.showFooter"/>-->
   </div>
 </template>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+<script>
+export default {
+  methods: {
+    goTo (path) {
+      this.$router.replace(path)
+    }
+  }
 }
+</script>
 
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
+<style lang="less" rel="stylesheet/less">
+  .app
+    {
+      width: 100%;
+      height: 100%;
+      background: #f5f5f5;
+    }
 </style>
