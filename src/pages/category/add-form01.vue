@@ -4,7 +4,9 @@
       :style="{ display: 'inline-block', width: 'calc(50% - 12px)' }"
     >
       <a-select
-        default-value="0"
+        v-decorator="[
+          'parentId',{initialValue: '0'}
+        ]"
       >
         <a-select-option value="0">
           一级分类
@@ -16,7 +18,7 @@
     </a-form-item>
     <a-form-item :style="{ display: 'inline-block', width: 'calc(50% - 12px)' }">
       <a-input  v-decorator="[
-          'categoryName',
+          'categoryName',{initialValue: ''},
           { rules: [{ required: true, message: '分类名称必须输入' }] },
         ]" placeholder='请输入分类名称'/>
     </a-form-item>
@@ -37,7 +39,7 @@ export default {
     this.setForm(this.form)
   },
   props: {
-    categoryName: Object,
+    // categoryName: Object,
     setForm: Function,
     categorys: Array,
     parentId: String
@@ -50,14 +52,13 @@ export default {
       },
       mapPropsToFields: () => {
         return {
-          categoryName: this.$form.createFormField({
-            ...this.categoryName,
-            value: this.categoryName.value
+          parebtId: this.$form.createFormField({
+            ...this.parebtId
           })
         }
       },
       onValuesChange (_, values) {
-        console.log(values)
+        console.log('初始化回调： ' + values)
       }
     })
   },
@@ -65,8 +66,14 @@ export default {
     categoryName () {
       this.form.updateFields({
         categoryName: this.$form.createFormField({
-          ...this.categoryName,
-          value: this.categoryName.value
+          ...this.categoryName
+        })
+      })
+    },
+    parebtId () {
+      this.form.updateFields({
+        parebtId: this.$form.createFormField({
+          ...this.parebtId
         })
       })
     }

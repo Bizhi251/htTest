@@ -15,9 +15,12 @@
       </a-button>
     </template>
 
-    <a-table :columns="columns"
-             :dataSource="parentId==='0' ? categorys : subCategorys"
-             :loading="loading" bordered>
+    <a-table
+      :columns="columns"
+      :dataSource="parentId==='0' ? categorys : subCategorys"
+      :loading="loading" bordered
+      rowKey="_id"
+    >
       <LinkButton slot="name" slot-scope="text" style="width: 15vw">{{text}}</LinkButton>
       <span slot="customTitle" ><a-icon type="smile-o" /> 分类名称</span>
       <span slot="action" slot-scope="text, record" >
@@ -34,12 +37,9 @@
              @cancel=" handleCancel"
     >
       <AddForm
-        :categoryName="fields.categoryName" @change="handleFormChange" :categorys="categorys"
+        :categorys="categorys"
         :parentId="parentId" :setForm="Func"
       ></AddForm>
-<!--      <pre >-->
-<!--        {{ JSON.stringify(fields, null, 2) }}-->
-<!--      </pre>-->
     </a-modal>
 <!--    <a-modal-->
 <!--      title="更新分类"-->
@@ -84,19 +84,11 @@ const columns = [
 ]
 
 export default {
-  // beforeMount () {
-  //   this.initColumns()
-  // },
   mounted () {
     this.getCategorys()
   },
   data () {
     return {
-      fields: {
-        categoryName: {
-          value: 'benjycui'
-        }
-      },
       columns: columns, // 初始化Table所有列的数组
       loading: true, // 是否正在获取数据中
       categorys: [], // 一级分类列表
@@ -107,11 +99,8 @@ export default {
     }
   },
   methods: {
+    // 获取子组件的表单
     Func (form) { this.form = form },
-    handleFormChange (changedFields) {
-      console.log('changedFields', changedFields)
-      this.fields = { ...this.fields, ...changedFields }
-    },
     /*
   异步获取一级/二级分类列表显示
   parentId: 如果没有指定根据状态中的parentId请求, 如果指定了根据指定的请求
@@ -131,8 +120,8 @@ export default {
         if (parentId === '0') {
           // 更新一级分类状态
           console.log(data)
-          this.categorys = data.categorys
-          console.log('----', data === [] ? this.categorys.length : '空')
+          this.categorys = data
+          console.log('----', data !== [] ? this.categorys : '空')
         } else {
           // 更新二级分类状态
           this.subCategorys = data.subCategorys
@@ -205,7 +194,7 @@ export default {
           const result = await reqAddCategory(categoryName, parentId)
           if (result.status === 0) {
             // 添加的分类就是当前分类列表下的分类
-            if (parentId === this.state.parentId) {
+            if (parentId === this.parentId) {
               // 重新获取当前分类列表显示
               this.getCategorys()
             } else if (parentId === '0') { // 在二级分类列表下添加一级分类, 重新获取一级分类列表, 但不需要显示一级列表
