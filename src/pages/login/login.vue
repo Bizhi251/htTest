@@ -16,8 +16,13 @@
           <a-form-item>
             <a-input
               v-decorator="[
-          'userName',
-          { rules: [{ required: true, message: 'Please input your username!' }] },
+          'username',
+          { rules: [
+            { required: true, message: '用户名必须输入!' },
+            { min: 4, message: '用户名至少4位' },
+            { max: 12, message: '用户名至多12位' },
+            { pattern: /^[a-zA-Z0-9_]+$/, message: '用户名必须是英文、数字或下划线组成' },
+            ] },
         ]"
               placeholder="账号姓名"
             >
@@ -28,7 +33,12 @@
             <a-input
               v-decorator="[
           'password',
-          { rules: [{ required: true, message: 'Please input your Password!' }] },
+          { rules: [
+            { required: true, message: '请输入密码!' },
+            { min: 4, message: '用户名至少4位' },
+            { max: 12, message: '用户名至多12位' },
+            { pattern: /^[a-zA-Z0-9_]+$/, message: '用户名必须是英文、数字或下划线组成' },
+            ] },
         ]"
               type="password"
               placeholder="账号密码"
@@ -66,7 +76,11 @@
 </template>
 
 <script>
-import { Button, Form, Icon, Input, Checkbox } from 'ant-design-vue'
+import { Button, Form, Icon, Input, Checkbox, message } from 'ant-design-vue'
+import { reqLogin } from '../../api'
+import memoryUtils from '../../utils/memoryUtils'
+import storageUtils from '../../utils/storageUtils'
+
 export default {
   beforeCreate () {
     this.form = this.$form.createForm(this, { name: 'normal_login' })
@@ -74,9 +88,31 @@ export default {
   methods: {
     handleSubmit (e) {
       e.preventDefault()
-      this.form.validateFields((err, values) => {
+      this.form.validateFields(async (err, values) => {
         if (!err) {
-          console.log('Received values of form: ', values)
+          // 所有表单进行校验
+          // console.log('Received values of form: ', values)
+          // 请求登陆
+          const { username, password } = values
+          const result = await reqLogin(username, password) // {status: 0, data: user}  {status: 1, msg: 'xxx'}
+          // console.log('请求成功', result)
+          if (result.status === 0) { // 登陆成功
+            // 提示登陆成功
+            message.success('登陆成功')
+
+            // 保存user
+            const user = result.data
+            memoryUtils.user = user // 保存在内存中
+            storageUtils.saveUser(user) // 保存到local中
+            console.log(this)
+            // F5
+            this.$router.go(0)
+          } else { // 登陆失败
+            // 提示错误信息
+            message.error(result.msg)
+          }
+        } else {
+          console.log('检验失败!')
         }
       })
     }

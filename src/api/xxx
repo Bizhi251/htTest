@@ -1,0 +1,46 @@
+      {
+        path: '/admin/category',
+        name: 'category',
+        component: Category
+      },
+      {
+        path: '/admin/product',
+        name: 'product',
+        component: Product
+      },
+      {
+        path: '/admin/user',
+        name: 'user',
+        component: User
+      },
+      {
+        path: '/admin/role',
+        name: 'role',
+        component: Role
+      },
+      {
+        path: '/admin/order',
+        name: 'order',
+        component: Order
+      },
+      {
+        path: '/admin/charts',
+        name: 'charts',
+        children: [
+          {
+            path: '/admin/charts/bar',
+            component: Bar
+          },
+          {
+            path: '/admin/charts/pie',
+            component: Pie
+          },
+          {
+            path: '/admin/charts/line',
+            component: Line
+          }
+        ]
+      },
+      {
+        component: NotFound
+      }
