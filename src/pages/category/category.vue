@@ -23,13 +23,11 @@
     >
       <LinkButton slot="name" slot-scope="text" style="width: 15vw">{{text}}</LinkButton>
       <span slot="customTitle" ><a-icon type="smile-o" /> 分类名称</span>
-      <span slot="action" slot-scope="text, record" >
-      <LinkButton >Invite 一 {{record.name}}</LinkButton>
-      <a-divider type="vertical" />
-<!--      <LinkButton >Delete</LinkButton>-->
-<!--      <a-divider type="vertical" />-->
-      <LinkButton  class="ant-dropdown-link"> More actions <a-icon type="down" /> </LinkButton>
-    </span>
+      <template slot="action"  slot-scope="record">
+        <LinkButton @logout="showUpdate(record)">修改分类</LinkButton>
+        <a-divider type="vertical" />
+        <LinkButton  class="ant-dropdown-link" >查看子分类<a-icon type="down" /> </LinkButton>
+      </template>
     </a-table>
     <a-modal title="添加分类"
              :visible="showStatus===1"
@@ -41,17 +39,17 @@
         :parentId="parentId" :setForm="Func"
       ></AddForm>
     </a-modal>
-<!--    <a-modal-->
-<!--      title="更新分类"-->
-<!--      :visible="showStatus===2"-->
-<!--      @ok="this.updateCategory"-->
-<!--      @cancel="this.handleCancel"-->
-<!--    >-->
-<!--      <UpdateForm-->
-<!--        :categoryName="category.name"-->
-<!--        :setForm="(form) => {this.form = form}"-->
-<!--      ></UpdateForm>-->
-<!--    </a-modal>-->
+    <a-modal
+      title="更新分类"
+      :visible="showStatus===2"
+      @ok="this.updateCategory"
+      @cancel="this.handleCancel"
+    >
+      <UpdateForm
+        :categoryName="category.name"
+        :setForm="(form) => {this.form = form}"
+      ></UpdateForm>
+    </a-modal>
   </a-card>
 </template>
 
@@ -66,7 +64,7 @@ import {
   Modal
 } from 'ant-design-vue'
 import AddForm from './add-form01.vue'
-// import UpdateForm from './update-from.vue'
+import UpdateForm from './update-from.vue'
 import LinkButton from '../../components/link-button/link-button.vue'
 import { reqCategorys, reqUpdateCategory, reqAddCategory } from '../../api/index'
 const columns = [
@@ -74,11 +72,13 @@ const columns = [
     dataIndex: 'name',
     key: 'name',
     slots: { title: 'customTitle' },
+    width: '60%',
     scopedSlots: { customRender: 'name' }
   },
   {
     title: '操作',
     key: 'action',
+    width: '40%',
     scopedSlots: { customRender: 'action' }
   }
 ]
@@ -89,6 +89,7 @@ export default {
   },
   data () {
     return {
+      category: Object,
       columns: columns, // 初始化Table所有列的数组
       loading: true, // 是否正在获取数据中
       categorys: [], // 一级分类列表
@@ -211,6 +212,7 @@ export default {
     showUpdate (category) {
       // 保存分类对象
       this.category = category
+      console.log('#######' + this.category.name)
       // 更新状态
       this.showStatus = 2
     },
@@ -250,7 +252,7 @@ export default {
     ADivider: Divider,
     AModal: Modal,
     AddForm,
-    // UpdateForm,
+    UpdateForm,
     LinkButton
   }
 }

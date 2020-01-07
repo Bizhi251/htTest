@@ -4,7 +4,7 @@
       <a-layout-sider>
         <LeftNav/>
       </a-layout-sider>
-      <a-layout>
+      <a-layout style="min-width: 450px">
         <a-layout-header style="height: 80px; padding: 0px">
           <Header/>
         </a-layout-header>

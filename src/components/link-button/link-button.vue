@@ -7,8 +7,8 @@
 <script>
 export default {
   methods: {
-    childMethod () {
-      this.$emit('logout')
+    childMethod (re) {
+      this.$emit('logout', re)
     }
   }
 }
