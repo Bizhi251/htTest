@@ -2,8 +2,8 @@
   <a-form :form="form">
     <a-form-item>
       <a-input v-decorator="[
-          'categoryName',{initialValue: categoryName},
-          { rules: [{ required: true, message: '分类名称必须输入' }] },
+          'categoryName',
+          { rules: [{ required: true, message: '分类名称必须输入' }], initialValue: categoryName},
         ]" placeholder='请输入分类名称'/>
     </a-form-item>
   </a-form>

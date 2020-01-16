@@ -11,8 +11,12 @@ import User from '../pages/user/user'
 import Bar from '../pages/charts/bar/bar'
 import Line from '../pages/charts/line/line'
 import Pie from '../pages/charts/pie/pie'
-import NotFound from '..//pages/not-found/not-found'
-import Order from '..//pages/order/order'
+import NotFound from '../pages/not-found/not-found'
+import Order from '../pages/order/order'
+
+import PHome from '../pages/product/home'
+import PAU from '../pages/product/add-update'
+import PDe from '../pages/product/detail'
 
 Vue.use(VueRouter)
 // const Login = () => import('../pages/login/login')
@@ -49,12 +53,6 @@ const routes = [
         meta: { requireAuth: true }
       },
       {
-        path: '/admin/product',
-        name: 'product',
-        component: Product,
-        meta: { requireAuth: true }
-      },
-      {
         path: '/admin/user',
         name: 'user',
         component: User,
@@ -86,6 +84,32 @@ const routes = [
         path: '/admin/charts/line',
         component: Line,
         meta: { requireAuth: true }
+      },
+      {
+        path: '/admin/product',
+        name: 'product',
+        component: Product,
+        children: [
+          {
+            path: '/admin/product',
+            redirect: '/product/home'
+          },
+          {
+            path: '/product/home',
+            component: PHome,
+            meta: { requireAuth: true }
+          },
+          {
+            path: '/product/addupdate',
+            component: PAU,
+            meta: { requireAuth: true }
+          },
+          {
+            path: '/product/detail',
+            component: PDe,
+            meta: { requireAuth: true }
+          }
+        ]
       },
       {
         path: '/*',

@@ -1,10 +1,10 @@
 <template>
   <div id="components-layout-demo-basic">
-    <a-layout style="height: 100%">
+    <a-layout style="min-height: 100%">
       <a-layout-sider>
         <LeftNav/>
       </a-layout-sider>
-      <a-layout style="min-width: 450px">
+      <a-layout style="min-width: 450px; overflow: auto">
         <a-layout-header style="height: 80px; padding: 0px">
           <Header/>
         </a-layout-header>

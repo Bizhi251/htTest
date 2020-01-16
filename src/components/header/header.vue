@@ -5,9 +5,6 @@
       <LinkButton @logout="logout">
         <span>退出</span>
       </LinkButton>
-      <a href="javascrip:" @click="logout">
-        退出01
-      </a>
     </div>
     <div class="header-bottom">
       <div class="header-bottom-left">{{getTitle}}</div>
@@ -92,8 +89,13 @@ export default {
     getTitle: function () {
       // 得到当前请求路径
       // const path = this.props.location.pathname
-      const path = this.$route.path.substr(6)
-      // console.log('path' + path)
+      let path
+      if (this.$route.path.substr(0, 8) === '/product') {
+        return '商品管理'
+      } else {
+        path = this.$route.path.substr(6)
+      }
+      // console.log('path:  ' + path)
       let title
       menuList.forEach(item => {
         if (item.key === path) { // 如果当前item对象的key与path一样,item的title就是需要显示的title

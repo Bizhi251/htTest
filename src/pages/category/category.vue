@@ -1,10 +1,13 @@
 <template>
-  <a-card class="huan">
+  <a-card class="huan"
+  >
     <template v-slot:title>
       <div style="text-align:left">
         <LinkButton>一级分类列表</LinkButton>
-        <a-icon type="right" style="marginRight: 5"/>
-        parentName
+        <span v-if="parentId!=='0'">
+          <a-icon type="right" style="marginRight: 5"/>
+          parentName
+        </span>
       </div>
 
     </template>
@@ -18,8 +21,10 @@
     <a-table
       :columns="columns"
       :dataSource="parentId==='0' ? categorys : subCategorys"
-      :loading="loading" bordered
+      :loading="loading"
+      bordered
       rowKey="_id"
+      :pagination="{defaultPageSize: 5, showQuickJumper: true}"
     >
       <LinkButton slot="name" slot-scope="text" style="width: 15vw">{{text}}</LinkButton>
       <span slot="customTitle" ><a-icon type="smile-o" /> 分类名称</span>
@@ -63,7 +68,7 @@ import {
   message,
   Modal
 } from 'ant-design-vue'
-import AddForm from './add-form01.vue'
+import AddForm from './add-form.vue'
 import UpdateForm from './update-from.vue'
 import LinkButton from '../../components/link-button/link-button.vue'
 import { reqCategorys, reqUpdateCategory, reqAddCategory } from '../../api/index'
@@ -185,6 +190,8 @@ export default {
       // console.log('Form: ' + this.form)
       this.form.validateFields(async (err, values) => {
         if (!err) {
+          // 所有表单进行校验
+          console.log('Received values of form: ', values)
           // 隐藏确认框
           this.showStatus = 0
 
@@ -212,7 +219,7 @@ export default {
     showUpdate (category) {
       // 保存分类对象
       this.category = category
-      console.log('#######' + this.category.name)
+      // console.log(category)
       // 更新状态
       this.showStatus = 2
     },
