@@ -36,9 +36,7 @@ export default {
   //   console.log(this.imgs)
   // },
   props: {
-    imgs: {
-      type: Array
-    }
+    imgs: Array
   },
   data () {
     return {

@@ -3,7 +3,7 @@
   >
     <template v-slot:title>
       <div style="text-align:left">
-        <LinkButton>一级分类列表</LinkButton>
+        <LinkButton @logout="showCategorys">一级分类列表</LinkButton>
         <span v-if="parentId!=='0'">
           <a-icon type="right" style="marginRight: 5"/>
           parentName
@@ -31,7 +31,7 @@
       <template slot="action"  slot-scope="record">
         <LinkButton @logout="showUpdate(record)">修改分类</LinkButton>
         <a-divider type="vertical" />
-        <LinkButton  class="ant-dropdown-link" >查看子分类<a-icon type="down" /> </LinkButton>
+        <LinkButton  class="ant-dropdown-link" @logout="showSubCategorys(record)">查看子分类<a-icon type="down" /> </LinkButton>
       </template>
     </a-table>
     <a-modal title="添加分类"
@@ -123,14 +123,16 @@ export default {
       if (result.status === 0) {
         // 取出分类数组(可能是一级也可能二级的)
         const data = result.data
+        // console.log(data)
         if (parentId === '0') {
           // 更新一级分类状态
           console.log(data)
           this.categorys = data
           console.log('----', data !== [] ? this.categorys : '空')
         } else {
+          console.log(data)
           // 更新二级分类状态
-          this.subCategorys = data.subCategorys
+          this.subCategorys = data
         }
       } else {
         message.error('获取分类列表失败')
@@ -142,14 +144,11 @@ export default {
      */
     showSubCategorys (category) {
       // 更新状态
-      this.data = {
-        parentId: category._id,
-        parentName: category.name
-      }.then(() => { // 在状态更新且重新render()后执行
-        console.log('parentId', this.state.parentId) // '0'
-        // 获取二级分类列表显示
-        this.getCategorys()
-      })
+      this.parentId = category._id
+      this.parentName = category.name
+      console.log('parentId', this.parentId) // '0'
+      // 获取二级分类列表显示
+      this.getCategorys(this.parentId)
       // setState()不能立即获取最新的状态: 因为setState()是异步更新状态的
       // console.log('parentId', this.state.parentId) // '0'
     },
@@ -159,11 +158,9 @@ export default {
      */
     showCategorys () {
       // 更新为显示一列表的状态
-      this.data = {
-        parentId: '0',
-        parentName: '',
-        subCategorys: []
-      }
+      this.parentId = '0'
+      this.parentName = ''
+      this.subCategorys = []
     },
 
     /*

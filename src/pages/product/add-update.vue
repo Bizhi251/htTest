@@ -76,22 +76,24 @@ import {
   reqCategorys,
   reqAddOrUpdateProduct
 } from '../../api/index'
+// import product from './product'
 
 export default {
   mounted () {
     console.log(this.$route.query)
-    // let obj = this.$route.query.imgs
+    console.log(this.$route.query.pCategoryId)
+    const query = this.$route.query
     this.getCategorys('0')
-    this.categoryIds.push(this.$route.query.categoryId)
-    // this.imgs = obj
-    // this.detail = this.$route.query.detail
-    this.product = this.$route.state || {}
+    if (query.pCategoryId !== '0') {
+      this.categoryIds.push(query.pCategoryId)
+    }
+    this.categoryIds.push(query.categoryId)
   },
   data () {
     return {
       categoryIds: [],
       form: this.$form.createForm(this, { name: 'add-update' }),
-      options: [], // 分类
+      options: this.$route.query.options || [], // 分类
       labelCol: { // label布局
         xs: { span: 24 },
         sm: { span: 4 }
@@ -100,7 +102,7 @@ export default {
         xs: { span: 24 },
         sm: { span: 10 }
       },
-      imgs: this.$route.query.imgs || [], // 图
+      imgs: (Array.isArray(this.$route.query.imgs) ? this.$route.query.imgs : (this.$route.query.imgs ? [this.$route.query.imgs] : [])), // 图
       detail: this.$route.query.detail || '', // 富文本
       isUpdate: !!this.$route.query.status, // 是否是修改
       product: this.$route.query.pCategoryId
@@ -117,9 +119,10 @@ export default {
         label: c.name,
         isLeaf: false // 不是叶子
       }))
-
+      console.log('op')
+      console.log(options)
       // 如果是一个二级分类商品的更新
-      const isUpdate = false
+      const isUpdate = this.isUpdate
       const pCategoryId = this.product
       if (isUpdate && pCategoryId !== '0') {
         // 获取对应的二级分类列表
@@ -130,10 +133,10 @@ export default {
           label: c.name,
           isLeaf: true
         }))
-
+        // console.log(subCategorys)
         // 找到当前商品对应的一级option对象
         const targetOption = options.find(option => option.value === pCategoryId)
-
+        // console.log(targetOption)
         // 关联对应的一级option上
         targetOption.children = childOptions
       }

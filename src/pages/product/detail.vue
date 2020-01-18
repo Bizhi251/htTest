@@ -23,6 +23,7 @@
       </a-list-item>
       <a-list-item>
         <span class="left">所属分类:</span>
+        <span>{{cName1}} {{cName2==='0' ? '' : ' --> '+cName2}}</span>
         <span></span>
       </a-list-item>
       <a-list-item>
@@ -35,9 +36,9 @@
           />
         </span>
       </a-list-item>
-      <a-list-item>
+      <a-list-item v-if="query.detail">
         <span class="left">商品详情:</span>
-        <span>{{ToText(query.detail)}}</span>
+        <span>{{toText}}</span>
       </a-list-item>
 
     </a-list>
@@ -52,22 +53,47 @@ import {
 
 import LinkButton from '../../components/link-button/link-button'
 import { BASE_IMG_URL } from '../../utils/constants'
+import { reqCategory } from '../../api'
 
 export default {
   data () {
     return {
       BASE_IMG_URL,
-      query: this.$route.query,
-      imgs: this.$route.query.imgs
+      query: {},
+      imgs: [],
+      cName1: {},
+      cName2: '0'
+    }
+  },
+  async mounted () {
+    const query = this.$route.query
+    this.query = query
+    this.imgs = Array.isArray(query.imgs) ? query.imgs || [] : [query.imgs]
+    const pCategoryId = query.pCategoryId
+    const categoryId = query.categoryId
+    if (pCategoryId === '0') { // 一级分类下的商品
+      const result = await reqCategory(categoryId)
+      const cName1 = result.data.name
+      this.cName1 = cName1
+    } else { // 二级分类下的商品
+      // 一次性发送多个请求, 只有都成功了, 才正常处理
+      const results = await Promise.all([reqCategory(pCategoryId), reqCategory(categoryId)])
+      this.cName1 = results[0].data.name
+      this.cName2 = results[1].data.name
     }
   },
   methods: {
     goto () {
       this.$router.go(-1)
-    },
-    ToText (HTML) {
-      var input = HTML
-      return input.replace(/<(style|script|iframe)[^>]*?>[\s\S]+?<\/\1\s*>/gi, '').replace(/<[^>]+?>/g, '').replace(/\s+/g, ' ').replace(/ /g, ' ').replace(/>/g, ' ')
+    }
+    // ToText (HTML) {
+    //   var input = HTML
+    //   return input.replace(/<(style|script|iframe)[^>]*?>[\s\S]+?<\/\1\s*>/gi, '').replace(/<[^>]+?>/g, '').replace(/\s+/g, ' ').replace(/ /g, ' ').replace(/>/g, ' ')
+    // }
+  },
+  computed: {
+    toText: function () {
+      return this.query.detail.replace(/<(style|script|iframe)[^>]*?>[\s\S]+?<\/\1\s*>/gi, '').replace(/<[^>]+?>/g, '').replace(/\s+/g, ' ').replace(/ /g, ' ').replace(/>/g, ' ')
     }
   },
   components: {

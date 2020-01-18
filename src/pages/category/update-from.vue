@@ -15,7 +15,7 @@ import {
 } from 'ant-design-vue'
 export default {
   beforeMount () {
-    console.log('setFoem: ' + this.setForm)
+    // console.log('setFoem: ' + this.setForm)
     this.setForm(this.form)
   },
   props: {

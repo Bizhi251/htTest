@@ -1,23 +1,24 @@
 <template>
-  <a-form layout='inline' :form="form">
+  <a-form layout='inline' :form="form" >
     <a-form-item
-      :style="{ display: 'inline-block', width: 'calc(50% - 12px)' }"
+      :style="{ display: 'inline-block'}"
     >
       <a-select
+        style="width: 250px"
         v-decorator="[
-          'parentId',{initialValue: '0'}
+          'parentId',{initialValue: this.parentId}
         ]"
       >
         <a-select-option value="0">
           一级分类
         </a-select-option>
-        <a-select-option value="c._id" v-for="c in categorys" :key="c._id">
+        <a-select-option :value="c._id" v-for="c in categorys" :key="c._id">
           {{c.name}}
         </a-select-option>
       </a-select>
     </a-form-item>
-    <a-form-item :style="{ display: 'inline-block', width: 'calc(50% - 12px)' }">
-      <a-input  v-decorator="[
+    <a-form-item :style="{ display: 'inline-block'}">
+      <a-input style="width: 250px"  v-decorator="[
           'categoryName',
           {
             rules: [{ required: true, message: '分类名称必须输入' },
@@ -38,8 +39,11 @@ import {
 
 export default {
   beforeMount () {
-    console.log('setFoem: ' + this.setForm)
+    // console.log('setFoem: ' + this.setForm)
     this.setForm(this.form)
+  },
+  mounted () {
+    console.log(this.categorys)
   },
   props: {
     // categoryName: Object,
