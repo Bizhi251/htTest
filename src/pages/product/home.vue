@@ -3,9 +3,9 @@
     <template v-slot:title>
      <span>
         <a-select
-          :value= "searchType"
+          defaultValue="productName"
+          v-model="searchType"
           style="width: 150px"
-          :onChange="value => this.setState({searchType:value})"
         >
           <a-select-option value='productName'>按名称搜索</a-select-option>
           <a-select-option value='productDesc'>按描述搜索</a-select-option>
@@ -13,10 +13,9 @@
        <a-input
          placeholder='关键字'
          style="width: 150px; margin: 0px 15px"
-         :value="searchName"
-         onChange="e => this.setState({searchName:event.target.value})"
+         v-model="searchName"
         />
-        <a-button type='primary' @click="() => this.getProducts(1)">搜索</a-button>
+        <a-button type='primary' @click="getProducts(1)">搜索</a-button>
       </span>
     </template>
     <template v-slot:extra>
@@ -74,7 +73,11 @@ import {
   message
 } from 'ant-design-vue'
 import LinkButton from '../../components/link-button/link-button'
-import { reqProducts, reqSearchProducts, reqUpdateStatus } from '../../api/index'
+import {
+  reqProducts,
+  reqSearchProducts,
+  reqUpdateStatus
+} from '../../api/index'
 import { PAGE_SIZE } from '../../utils/constants'
 
 const columns = [
@@ -135,6 +138,7 @@ export default {
       // console.log('#####' + this.pageNum + '####' + PAGE_SIZE)
       const searchName = this.searchName
       const searchType = this.searchType
+      console.log('name: ' + searchName + 'type: ' + searchType)
       // 如果搜索关键字有值, 说明我们要做搜索分页
       let result
       if (searchName) {
@@ -147,7 +151,8 @@ export default {
       this.loading = false// 隐藏loading
       if (result.status === 0) {
         // 取出分页数据, 更新状态, 显示分页列表
-        const { total, list } = result.data
+        const total = result.data.total
+        const list = result.data.list
         this.total = total
         this.products = list
       }
