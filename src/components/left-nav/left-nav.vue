@@ -18,7 +18,7 @@
       </a-menu-item>
       <a-sub-menu v-for="menu in menucs" :key="menu.key" >
         <span slot="title"><a-icon :type="menu.icon" /><span>{{menu.title}}</span></span>
-        <a-menu-item v-for="son in menu.children" :key="son.key" :to="son.key">
+        <a-menu-item v-for="son in menu.children.filter(child =>  menus.indexOf(child.key)!==-1)" :key="son.key" :to="son.key">
           <router-link :to="'/admin'+son.key">
             <a-icon :type="son.icon" />
             <span>{{son.title}}</span>
@@ -32,11 +32,18 @@
 <script>
 import menuList from '../../config/menuConfig'
 import { Menu, Icon } from 'ant-design-vue'
+import memoryUtils from '../../utils/memoryUtils'
 export default {
+
+  mounted () {
+    console.log(memoryUtils.user)
+  },
   data () {
     return {
       collapsed: false,
-      menuList
+      menuList,
+      menus: memoryUtils.user.role.menus,
+      username: memoryUtils.user.username
     }
   },
   methods: {
@@ -55,14 +62,16 @@ export default {
   computed: {
     // 无子路由
     menuLists: function () {
+      const that = this
       return this.menuList.filter(function (menu) {
-        return !menu.children
+        return (that.username === 'admin' || menu.isPublic || that.menus.indexOf(menu.key) !== -1) && !menu.children
       })
     },
     // 有子路由
     menucs: function () {
+      const that = this
       return this.menuList.filter(function (menu) {
-        return !!menu.children
+        return !menu.children ? false : menu.children.find(child => that.menus.indexOf(child.key) !== -1)
       })
     }
   }
